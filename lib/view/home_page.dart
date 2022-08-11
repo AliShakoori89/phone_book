@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:phone_book/view/bottom_navigation_bar/call_logs.dart';
+import 'package:phone_book/view/bottom_navigation_bar/favorite_contacts.dart';
+import 'bottom_navigation_bar/contacts_page.dart';
+
+class HomePage extends StatefulWidget {
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _children = [
+    ContactPage(),
+    CallLogs(),
+    FavoriteContacts()
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // backgroundColor: Colors.grey.withOpacity(0.5),
+        bottomNavigationBar: BottomNavigationBar(
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.contacts),
+                  label: 'Contact',
+                  backgroundColor: Colors.grey[300]
+                  ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.access_time_rounded),
+                label: 'Resent',
+                  backgroundColor: Colors.grey[300]
+                ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.star),
+                  label: 'Favorites',
+                backgroundColor: Colors.grey[300]
+                  ),
+            ],
+            type: BottomNavigationBarType.shifting,
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.black,
+            iconSize: 25,
+            onTap: _onItemTapped,
+            elevation: 5),
+        body: _children[_selectedIndex]);
+  }
+}

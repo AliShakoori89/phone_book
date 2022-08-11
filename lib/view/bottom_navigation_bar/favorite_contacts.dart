@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:phone_book/bloc/contactPage_bloc.dart';
+import 'package:phone_book/model/contact_model.dart';
+import 'package:phone_book/view/card_view.dart';
+
+class FavoriteContacts extends StatefulWidget {
+  final Contact contact;
+
+  const FavoriteContacts({Key key, this.contact}) : super(key: key);
+
+  @override
+  _FavoriteContactsState createState() => _FavoriteContactsState(contact);
+}
+
+class _FavoriteContactsState extends State<FavoriteContacts> {
+  Contact contact;
+  _FavoriteContactsState(this.contact);
+
+  @override
+  Widget build(BuildContext context) {
+    final contactBloc = BlocProvider.of<ContactBloc>(context);
+    contactBloc.add(FetchFavoriteContactEvent(contact));
+    return BlocBuilder<ContactBloc, ContactState>(builder: (context, state) {
+    if (state is ContactsIsLoadedState) {
+    print("state is loading");
+    return Scaffold(
+      backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.grey[300].withOpacity(0.5),
+            title: Center(
+              child: Text(
+                'Favorit Contacts',
+                style: TextStyle(color: Colors.black87, fontSize: 16),
+              ),
+            )
+          ),
+          body: contactsListViewBuilder(context, state.getContacts)
+        );
+      }
+    return Container(
+      color: Colors.white,
+      child: Text("oops nothing here", style: TextStyle(color: Colors.white12,fontSize: 14.0),),
+    );});}
+
+  Widget contactsListViewBuilder(context, contacts) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 5
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.grey[400].withOpacity(0.5),
+            ),
+              child: ListView.builder(
+                  itemCount: contacts.length,
+                  itemBuilder: (BuildContext context, int index) {
+
+                    return Dismissible(
+                        key: Key('item ${contacts[index]}'),
+                        onDismissed: (DismissDirection direction) {
+                          if (direction == DismissDirection.startToEnd) {} else {
+                            print('Remove item');
+                          }
+                        },
+                        child: CardView(contacts[index]));
+                  }
+              )
+          ),
+        ),
+      );
+  }
+}
